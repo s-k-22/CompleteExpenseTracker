@@ -9,5 +9,20 @@ exports.signup = async (req, res) => {
     password: password,
   });
 
-  res.status(201).json({userDetails:data})
+  res.status(201).json({ userDetails: data });
+};
+
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ where: { email: email } });
+  if (!user) {
+    res.status(401).json({ message: "User not found" });
+  } else {
+    console.log("found");
+    if (user.password !== password) {
+      res.status(401).json({ message: "User not authorized" });
+    } else {
+      res.status(201).json({ message: "User logged in successfully" });
+    }
+  }
 };

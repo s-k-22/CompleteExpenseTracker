@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 
-const Homepage = () => {
+const Signup = () => {
   const usernameInput = useRef();
   const emailInput = useRef();
   const passwordInput = useRef();
@@ -40,30 +40,15 @@ const Homepage = () => {
         <Stack spacing={4}>
           <FormControl id="username" isRequired>
             <FormLabel>Username</FormLabel>
-            <Input
-              type="text"
-              // name="username"
-              // defaultValue={username}
-              ref={usernameInput}
-            />
+            <Input type="text" ref={usernameInput} />
           </FormControl>
           <FormControl id="email" isRequired>
             <FormLabel>Email address</FormLabel>
-            <Input
-              type="email"
-              // name="email"
-              // defaultValue={email}
-              ref={emailInput}
-            />
+            <Input type="email" ref={emailInput} />
           </FormControl>
           <FormControl id="password" isRequired>
             <FormLabel>Password</FormLabel>
-            <Input
-              type="password"
-              // name="password"
-              // defaultValue={formData.password}
-              ref={passwordInput}
-            />
+            <Input type="password" ref={passwordInput} />
           </FormControl>
           <Button type="submit" colorScheme="blue">
             Sign Up
@@ -77,4 +62,4 @@ const Homepage = () => {
   );
 };
 
-export default Homepage;
+export default Signup;
