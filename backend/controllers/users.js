@@ -1,9 +1,10 @@
 const User = require("../models/users");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Profile = require("../models/profile");
 
 exports.generateAccessToken = (id, name) => {
-  return jwt.sign({ userId: id, name: name }, "Secret_Key");
+  return jwt.sign({ userId: id, name: name }, process.env.TOKEN);
 };
 
 exports.signup = async (req, res) => {
@@ -47,5 +48,34 @@ exports.login = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json(error);
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  const { fullName, profilePhoto } = req.body;
+
+  const user = await Profile.findOne({ where: { userId: req.user.id } });
+  if (user) {
+    const data = await Profile.update(
+      { fullName, profilePhoto },
+      { where: { userId: req.user.id } }
+    );
+    res.status(201).json(data);
+  } else {
+    const data = await Profile.create({
+      fullName,
+      profilePhoto,
+      userId: req.user.id,
+    });
+    res.status(201).json(data);
+  }
+};
+
+exports.getProfileDetails = async (req, res) => {
+  const data = await Profile.findOne({ where: { userId: req.user.id } });
+  if (!data) {
+    res.status(204).json({ msg: "data not found" });
+  } else {
+    res.status(200).json(data);
   }
 };

@@ -31,7 +31,7 @@ const Login = () => {
         email,
         password,
       });
-      console.log(response);
+      // console.log(response);
       if (response.status === 201) {
         localStorage.setItem("token", response.data.token);
         toast({

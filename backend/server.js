@@ -2,12 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const sequelize = require("./util/database");
+const dotenv = require("dotenv").config();
 
 //routes
 const userRoutes = require("./routes/users");
 
 //models
-const User = require('./models/users')
+const User = require("./models/users");
+const Profile = require("./models/profile");
 
 const app = express();
 
@@ -20,6 +22,8 @@ app.use(
 );
 
 app.use("/users", userRoutes);
+
+Profile.belongsTo(User);
 
 sequelize
   .sync()

@@ -34,7 +34,7 @@ const Signup = () => {
         email,
         password,
       });
-      console.log(response);
+      // console.log(response);
       if (response.status === 201) {
         toast({
           title: "Account created.",

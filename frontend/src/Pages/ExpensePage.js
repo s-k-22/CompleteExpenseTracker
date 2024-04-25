@@ -1,9 +1,9 @@
 import React from 'react'
+import Header from '../components/Expenses/Header'
 
 const ExpensePage = () => {
-  return (
-    <div>Welcome to expense Tracker</div>
-  )
+ return <Header/>
+  
 }
 
 export default ExpensePage
