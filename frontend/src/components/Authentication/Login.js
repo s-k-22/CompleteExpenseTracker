@@ -27,6 +27,9 @@ const Login = () => {
         password,
       });
       console.log(response);
+      if(response.status===201){
+        localStorage.setItem('token',response.data.token)
+      }
     } catch (error) {
       console.log(error.response.data.message);
     }
