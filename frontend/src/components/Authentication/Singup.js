@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import {
   Box,
   Button,
@@ -8,6 +9,7 @@ import {
   Input,
   Stack,
   Heading,
+  useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
 
@@ -16,19 +18,42 @@ const Signup = () => {
   const emailInput = useRef();
   const passwordInput = useRef();
 
+  const toast = useToast();
+  const history = useHistory();
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    try {
+      e.preventDefault();
 
-    const username = usernameInput.current.value;
-    const email = emailInput.current.value;
-    const password = passwordInput.current.value;
+      const username = usernameInput.current.value;
+      const email = emailInput.current.value;
+      const password = passwordInput.current.value;
 
-    const response = await axios.post("http://localhost:5000/users/signup", {
-      username,
-      email,
-      password,
-    });
-    console.log(response);
+      const response = await axios.post("http://localhost:5000/users/signup", {
+        username,
+        email,
+        password,
+      });
+      console.log(response);
+      if (response.status === 201) {
+        toast({
+          title: "Account created.",
+          description: "We've created your account for you.",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+        history.replace("/login");
+      }
+    } catch (error) {
+      toast({
+        title: "Authentication failed",
+        description: error.response.data.message,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   return (

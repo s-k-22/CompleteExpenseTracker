@@ -7,39 +7,45 @@ exports.generateAccessToken = (id, name) => {
 };
 
 exports.signup = async (req, res) => {
-  const { username, email, password } = req.body;
+  try {
+    const { username, email, password } = req.body;
 
-  bcrypt.hash(password, 5, async (err, hash) => {
-    const data = await User.create({
-      name: username,
-      email,
-      password: hash,
+    bcrypt.hash(password, 5, async (err, hash) => {
+      const data = await User.create({
+        name: username,
+        email,
+        password: hash,
+      });
+
+      res.status(201).json({ userDetails: data });
     });
-
-    res.status(201).json({ userDetails: data });
-  });
+  } catch (error) {
+    res.status(500).json(error);
+  }
 };
 
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const user = await User.findOne({ where: { email: email } });
+    const user = await User.findOne({ where: { email: email } });
 
-  if (!user) {
-    res.status(401).json({ message: "User not found" });
-  } else {
-    bcrypt.compare(password, user.password, async (err, result) => {
-      if (err) throw new Error(err);
-      if (result) {
-        res
-          .status(201)
-          .json({
+    if (!user) {
+      res.status(401).json({ message: "User not found" });
+    } else {
+      bcrypt.compare(password, user.password, async (err, result) => {
+        if (err) throw new Error(err);
+        if (result) {
+          res.status(201).json({
             message: "User logged in successfully",
             token: this.generateAccessToken(user.id, user.name),
           });
-      } else {
-        res.status(401).json({ message: "User not authorized" });
-      }
-    });
+        } else {
+          res.status(401).json({ message: "User not authorized" });
+        }
+      });
+    }
+  } catch (error) {
+    res.status(500).json(error);
   }
 };

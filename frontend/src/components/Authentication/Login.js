@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import {
   Box,
   Button,
@@ -8,12 +9,16 @@ import {
   Input,
   Stack,
   Heading,
+  useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
 
 const Login = () => {
   const emailInput = useRef();
   const passwordInput = useRef();
+
+  const toast = useToast();
+  const history = useHistory();
 
   const handleSubmit = async (e) => {
     try {
@@ -27,11 +32,27 @@ const Login = () => {
         password,
       });
       console.log(response);
-      if(response.status===201){
-        localStorage.setItem('token',response.data.token)
+      if (response.status === 201) {
+        localStorage.setItem("token", response.data.token);
+        toast({
+          title: "Login successful.",
+          description: response.data.message,
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+
+        history.replace("/dashboard");
       }
     } catch (error) {
       console.log(error.response.data.message);
+      toast({
+        title: "Authentication failed",
+        description: error.response.data.message,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 
