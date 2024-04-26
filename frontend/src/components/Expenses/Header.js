@@ -2,9 +2,12 @@ import React from "react";
 import { Box, Text, Button, Flex, Spacer } from "@chakra-ui/react";
 import ProfileModal from "./ProfileModal";
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
+import axios from "axios";
 
 const Header = () => {
   const history = useHistory();
+
+  const handleEmailVerification = async () => {};
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -20,6 +23,14 @@ const Header = () => {
         <Spacer />
 
         <ProfileModal />
+        <Button
+          variant="ghost"
+          color="white"
+          mr={4}
+          onClick={handleEmailVerification}
+        >
+          Verify Email
+        </Button>
         <Button variant="ghost" color="white" mr={4} onClick={handleLogout}>
           Logout
         </Button>
