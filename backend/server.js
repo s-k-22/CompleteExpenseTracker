@@ -10,6 +10,7 @@ const userRoutes = require("./routes/users");
 //models
 const User = require("./models/users");
 const Profile = require("./models/profile");
+const ForgotPassword = require("./models/forgotPasswords");
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(
 app.use("/users", userRoutes);
 
 Profile.belongsTo(User);
+ForgotPassword.belongsTo(User);
 
 sequelize
   .sync()

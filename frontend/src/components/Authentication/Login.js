@@ -77,6 +77,9 @@ const Login = () => {
           <Box textAlign="center">
             <Link to="/">Account does not exist? Sign up</Link>
           </Box>
+          <Box textAlign="center">
+            <Link to="/forgotPassword">Forgot password?</Link>
+          </Box>
         </Stack>
       </form>
     </Box>

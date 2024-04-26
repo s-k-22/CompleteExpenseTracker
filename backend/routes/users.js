@@ -20,4 +20,10 @@ router.get(
   userController.getProfileDetails
 );
 
+router.post("/sendEmailLink", userController.sendEmailLink);
+
+router.get("/resetPassword/:id", userController.resetPassword);
+
+router.get("/updatePassword/:id", userController.updatePassword);
+
 module.exports = router;
