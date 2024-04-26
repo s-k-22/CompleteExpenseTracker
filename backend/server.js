@@ -6,11 +6,13 @@ const dotenv = require("dotenv").config();
 
 //routes
 const userRoutes = require("./routes/users");
+const expenseRoutes = require("./routes/expenses");
 
 //models
 const User = require("./models/users");
 const Profile = require("./models/profile");
 const ForgotPassword = require("./models/forgotPasswords");
+const Expenses = require("./models/expense");
 
 const app = express();
 
@@ -23,9 +25,11 @@ app.use(
 );
 
 app.use("/users", userRoutes);
+app.use("/expenses", expenseRoutes);
 
 Profile.belongsTo(User);
 ForgotPassword.belongsTo(User);
+Expenses.belongsTo(User)
 
 sequelize
   .sync()
