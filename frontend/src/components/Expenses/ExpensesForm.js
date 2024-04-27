@@ -25,60 +25,68 @@ const ExpensesForm = () => {
   const toast = useToast();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    try {
+      e.preventDefault();
 
-    const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
-    const expId = idInput.current.value;
-    const amt = amtInput.current.value;
-    const desc = descInput.current.value;
-    const category = catInput.current.value;
+      const expId = idInput.current.value;
+      const amt = amtInput.current.value;
+      const desc = descInput.current.value;
+      const category = catInput.current.value;
 
-    if (!isEdit) {
-      const response = await axios.post(
-        "http://localhost:5000/expenses/addExpense",
-        { expId, amt, desc, category },
-        { headers: { Authorization: token } }
-      );
-      console.log(response);
-      if (response.status === 201) {
-        toast({
-          title: "Expense added.",
-          description: "Expense is added successfully",
-          status: "success",
-          duration: 9000,
-          isClosable: true,
-        });
-        setExpenses([...expenses, response.data]);
+      if (!isEdit) {
+        const response = await axios.post(
+          "http://localhost:5000/expenses/addExpense",
+          { expId, amt, desc, category },
+          { headers: { Authorization: token } }
+        );
+        // console.log(response);
+        if (response.status === 201) {
+          toast({
+            title: "Expense added.",
+            description: "Expense is added successfully",
+            status: "success",
+            duration: 9000,
+            isClosable: true,
+          });
+          setExpenses([...expenses, response.data]);
+        }
+      } else {
+        const response = await axios.put(
+          `http://localhost:5000/expenses/editExpense`,
+          { expId, amt, desc, category },
+          { headers: { Authorization: token } }
+        );
+        console.log(response);
+        if (response.status === 201) {
+          toast({
+            title: "Expense updated.",
+            description: "Expense is updated successfully",
+            status: "success",
+            duration: 9000,
+            isClosable: true,
+          });
+          window.location.reload();
+        }
       }
-    } else {
-      const response = await axios.put(
-        `http://localhost:5000/expenses/editExpense`,
-        { expId, amt, desc, category },
-        { headers: { Authorization: token } }
-      );
-      console.log(response);
-      if (response.status === 201) {
-        toast({
-          title: "Expense updated.",
-          description: "Expense is updated successfully",
-          status: "success",
-          duration: 9000,
-          isClosable: true,
-        });
-        window.location.reload();
-      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
   const getExpenses = async () => {
-    const token = localStorage.getItem("token");
-    const response = await axios.get(
-      "http://localhost:5000/expenses/getExpenses",
-      { headers: { Authorization: token } }
-    );
-    // console.log(response.data);
-    setExpenses([...expenses, ...response.data]);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        "http://localhost:5000/expenses/getExpenses",
+        { headers: { Authorization: token } }
+      );
+      // console.log(response.data);
+      setExpenses([...expenses, ...response.data]);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -86,20 +94,26 @@ const ExpensesForm = () => {
   }, []);
 
   const handleDelete = async (e) => {
-    const id = e.target.id;
-    const response = await axios.delete(
-      `http://localhost:5000/expenses/deleteExpense/${id}`
-    );
-    console.log(response);
-    toast({
-      title: "Expense deleted.",
-      description: "Expense is delete successfully",
-      status: "success",
-      duration: 9000,
-      isClosable: true,
-    });
-    const filteredExp = expenses.filter((exp) => exp.id !== id);
-    setExpenses(filteredExp);
+    try {
+      const id = e.target.id;
+      const filteredExp = await expenses.filter((exp) => exp.id !== id);
+      await setExpenses(filteredExp);
+      const response = await axios.delete(
+        `http://localhost:5000/expenses/deleteExpense/${id}`
+      );
+
+      if (response.status === 200) {
+        toast({
+          title: "Expense deleted.",
+          description: "Expense is delete successfully",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
