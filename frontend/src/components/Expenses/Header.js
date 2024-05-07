@@ -11,6 +11,12 @@ const Header = () => {
   const toast = useToast();
 
   const token = useSelector((state) => state.auth.token);
+  const expensesRTK = useSelector((state) => state.expense.expenses);
+
+  const amount = expensesRTK
+    .map((exp) => exp.amount)
+    .reduce((acc, currentValue) => acc + currentValue, 0);
+
   const dispatch = useDispatch();
 
   const handleEmailVerification = async () => {
@@ -37,6 +43,10 @@ const Header = () => {
     history.replace("/login");
   };
 
+  const handlePremium = () => {
+    console.log("hi");
+  };
+
   return (
     <Box bg="blue.500" px={4} py={3}>
       <Flex alignItems="center">
@@ -47,6 +57,17 @@ const Header = () => {
         <Spacer />
 
         <ProfileModal />
+
+        <Button
+          variant="ghost"
+          color="white"
+          mr={4}
+          onClick={handlePremium}
+          isDisabled={amount < 10000 ? true : false}
+        >
+          Activate Premium
+        </Button>
+
         <Button
           variant="ghost"
           color="white"
