@@ -11,109 +11,57 @@ import {
   Center,
   Stack,
 } from "@chakra-ui/react";
-import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addExpense,
+  deleteExpense,
+  editExpense,
+  getExpenses,
+} from "../../store/expenseSlice";
 
 const ExpensesForm = () => {
+  const expensesRTK = useSelector((state) => state.expense.expenses);
+  const dispatch = useDispatch();
+
   const idInput = useRef();
   const amtInput = useRef();
   const descInput = useRef();
   const catInput = useRef();
 
-  const [expenses, setExpenses] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
 
   const toast = useToast();
 
   const handleSubmit = async (e) => {
-    try {
-      e.preventDefault();
+    e.preventDefault();
 
-      const token = localStorage.getItem("token");
+    const expId = idInput.current.value;
+    const amt = amtInput.current.value;
+    const desc = descInput.current.value;
+    const category = catInput.current.value;
 
-      const expId = idInput.current.value;
-      const amt = amtInput.current.value;
-      const desc = descInput.current.value;
-      const category = catInput.current.value;
+    const data = { expId, amt, desc, category };
 
-      if (!isEdit) {
-        const response = await axios.post(
-          "http://localhost:5000/expenses/addExpense",
-          { expId, amt, desc, category },
-          { headers: { Authorization: token } }
-        );
-        // console.log(response);
-        if (response.status === 201) {
-          toast({
-            title: "Expense added.",
-            description: "Expense is added successfully",
-            status: "success",
-            duration: 9000,
-            isClosable: true,
-          });
-          setExpenses([...expenses, response.data]);
-        }
-      } else {
-        const response = await axios.put(
-          `http://localhost:5000/expenses/editExpense`,
-          { expId, amt, desc, category },
-          { headers: { Authorization: token } }
-        );
-        console.log(response);
-        if (response.status === 201) {
-          toast({
-            title: "Expense updated.",
-            description: "Expense is updated successfully",
-            status: "success",
-            duration: 9000,
-            isClosable: true,
-          });
-          window.location.reload();
-        }
-      }
-    } catch (error) {
-      console.log(error);
+    if (!isEdit) dispatch(addExpense(data));
+    else {
+      dispatch(editExpense(data));
+      setIsEdit(false);
+      document.getElementById(expId).parentElement.parentElement.style.display =
+        "";
     }
-  };
 
-  const getExpenses = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(
-        "http://localhost:5000/expenses/getExpenses",
-        { headers: { Authorization: token } }
-      );
-      // console.log(response.data);
-      setExpenses([...expenses, ...response.data]);
-    } catch (error) {
-      console.log(error);
-    }
+    idInput.current.value = "";
+    amtInput.current.value = "";
+    descInput.current.value = "";
+    catInput.current.value = "";
   };
 
   useEffect(() => {
-    getExpenses();
+    dispatch(getExpenses());
   }, []);
 
-  const handleDelete = async (e) => {
-    try {
-      const id = e.target.id;
-      const filteredExp = await expenses.filter((exp) => exp.id !== id);
-      await setExpenses(filteredExp);
-      const response = await axios.delete(
-        `http://localhost:5000/expenses/deleteExpense/${id}`
-      );
-
-      if (response.status === 200) {
-        toast({
-          title: "Expense deleted.",
-          description: "Expense is delete successfully",
-          status: "success",
-          duration: 9000,
-          isClosable: true,
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  const editHandler = (e) => {
+    console.log(e.target);
   };
 
   return (
@@ -154,7 +102,7 @@ const ExpensesForm = () => {
 
       <Center>
         <Stack pt={5}>
-          {expenses.map((item) => (
+          {expensesRTK.map((item) => (
             <Box
               key={item.id}
               width="500px"
@@ -183,20 +131,27 @@ const ExpensesForm = () => {
                   id={item.id}
                   onClick={() => {
                     setIsEdit(true);
+
+                    document.getElementById(
+                      item.id
+                    ).parentElement.parentElement.style.display = "none";
+
                     idInput.current.value = item.id;
                     amtInput.current.value = item.amount;
                     descInput.current.value = item.description;
                     catInput.current.value = item.category;
-                    const filteredExp = expenses.filter(
-                      (exp) => exp.id !== item.id
-                    );
-                    setExpenses(filteredExp);
                   }}
                 >
                   Edit
                 </Button>
 
-                <Button colorScheme="red" onClick={handleDelete} id={item.id}>
+                <Button
+                  colorScheme="red"
+                  onClick={() => {
+                    dispatch(deleteExpense(item.id));
+                    dispatch(getExpenses());
+                  }}
+                >
                   Delete
                 </Button>
               </Box>

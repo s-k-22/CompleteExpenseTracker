@@ -29,7 +29,7 @@ exports.deleteExpense = async (req, res) => {
   try {
     const id = req.params.id;
     await Expenses.destroy({ where: { id: id } });
-    res.status(200).json({ msg: "expense deleted successfully" });
+    res.status(200).json({ id: id });
   } catch (error) {
     res.status(500).json(error);
   }

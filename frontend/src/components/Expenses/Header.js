@@ -1,15 +1,19 @@
 import React from "react";
-import { Box, Text, Button, Flex, Spacer,useToast } from "@chakra-ui/react";
+import { Box, Text, Button, Flex, Spacer, useToast } from "@chakra-ui/react";
 import ProfileModal from "./ProfileModal";
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../../store/authSlice";
 
 const Header = () => {
   const history = useHistory();
-  const toast = useToast()
+  const toast = useToast();
+
+  const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
 
   const handleEmailVerification = async () => {
-    const token = localStorage.getItem("token");
     const response = await axios.post(
       "http://localhost:5000/users/sendEmailLink",
       {
@@ -17,21 +21,22 @@ const Header = () => {
       },
       { headers: { Authorization: token } }
     );
-    if(response.status===200){
-    toast({
-      title: "Verification link sent.",
-      description: "verification link is sent to registered email",
-      status: "success",
-      duration: 9000,
-      isClosable: true,
-    });
-  }
+    if (response.status === 200) {
+      toast({
+        title: "Verification link sent.",
+        description: "verification link is sent to registered email",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    dispatch(authActions.logout());
     history.replace("/login");
   };
+
   return (
     <Box bg="blue.500" px={4} py={3}>
       <Flex alignItems="center">

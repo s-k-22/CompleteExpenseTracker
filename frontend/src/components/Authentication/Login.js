@@ -12,6 +12,8 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../store/authSlice";
 
 const Login = () => {
   const emailInput = useRef();
@@ -19,6 +21,7 @@ const Login = () => {
 
   const toast = useToast();
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     try {
@@ -33,7 +36,9 @@ const Login = () => {
       });
       // console.log(response);
       if (response.status === 201) {
-        localStorage.setItem("token", response.data.token);
+        dispatch(
+          authActions.login({ type: "login", token: response.data.token })
+        );
         toast({
           title: "Login successful.",
           description: response.data.message,

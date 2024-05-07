@@ -19,8 +19,11 @@ import {
   Flex,
   Text,
 } from "@chakra-ui/react";
+import { useSelector } from "react-redux";
 
 const ProfileModal = (props) => {
+  const token = useSelector((state) => state.auth.token);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [fullName, setFullName] = useState("");
   const [profilePhoto, setProfilePhoto] = useState("");
@@ -32,8 +35,6 @@ const ProfileModal = (props) => {
   }, []);
 
   const fetchDetails = async () => {
-    const token = localStorage.getItem("token");
-
     const response = await axios.get(
       "http://localhost:5000/users/updateProfile",
       { headers: { Authorization: token } }
@@ -50,7 +51,6 @@ const ProfileModal = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
 
     await axios.post(
       "http://localhost:5000/users/updateProfile",
