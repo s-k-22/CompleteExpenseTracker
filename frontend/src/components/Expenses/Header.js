@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Text, Button, Flex, Spacer, useToast } from "@chakra-ui/react";
 import ProfileModal from "./ProfileModal";
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../store/authSlice";
 
 const Header = () => {
+  const [showDownloadBtn, setShowDownloadBtn] = useState(false);
   const history = useHistory();
   const toast = useToast();
 
@@ -44,8 +45,35 @@ const Header = () => {
   };
 
   const handlePremium = () => {
-    console.log("hi");
+    setShowDownloadBtn(true);
   };
+
+  const handleDownload = ()=>{
+     function saveFile(blob, fileName) {
+       const url = window.URL.createObjectURL(blob);
+       const a = document.createElement("a");
+       a.href = url;
+       a.download = fileName;
+       a.click();
+     }
+
+     let csvContent = "id,amount,description,category\n";
+     expensesRTK.forEach((exp) => {
+       let row =
+         exp.id +
+         "," +
+         exp.amount +
+         "," +
+         exp.description +
+         "," +
+         exp.category +
+         "\n";
+       csvContent += row;
+     });
+
+     var data = new Blob([csvContent], { type: "text/csv" });
+     saveFile(data, `expenses_${new Date()}.csv`);
+  }
 
   return (
     <Box bg="blue.500" px={4} py={3}>
@@ -67,6 +95,10 @@ const Header = () => {
         >
           Activate Premium
         </Button>
+
+        {showDownloadBtn && <Button variant="ghost" color="white" mr={4} onClick={handleDownload}>
+          Download File
+        </Button>}
 
         <Button
           variant="ghost"
